@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <utility>
+#include <sstream>
 using namespace std;
 
 const string TodoFileName = "TodoList.txt";
@@ -61,32 +62,27 @@ void loadTodoList()
     ifstream file(TodoFileName);
     if (file.is_open())
     {
-        int id;
-        string description, content, completedStr;
-        while (file >> id >> description >> content >> completedStr)
+        string line;
+        while (getline(file, line))
         {
-            bool completed = completedStr == "Yes" ? true : false;
+            stringstream ss(line);
+            string idStr, description, content, completedStr;
+            getline(ss, idStr, ',');
+            getline(ss, description, ',');
+            getline(ss, content, ',');
+            getline(ss, completedStr);
+
+            int id = stoi(idStr);
+
+            bool completed = (completedStr == "Yes");
+
             TodoItem newItem;
             newItem.setId(id);
             newItem.setDescription(description);
             newItem.setContent(content);
             newItem.setCompleted(completed);
 
-            // Add the loaded item to the todo list here using lambda functions...
-            auto idDescription = [&newItem]() -> pair<int, string>
-            {
-                return make_pair(newItem.getId(), newItem.getDescription());
-            };
-
-            auto contentStatus = [&newItem]() -> pair<string, bool>
-            {
-                return make_pair(newItem.getContent(), newItem.getCompleted());
-            };
-
-            pair<int, string> idDesc = idDescription();
-            pair<string, bool> conStat = contentStatus();
-
-            cout << idDesc.first << " || " << idDesc.second << " || " << conStat.first << " || " << conStat.second << endl;
+            cout << newItem.getId() << " || " << newItem.getDescription() << " || " << newItem.getContent() << " || " << (newItem.getCompleted() ? "Yes" : "No") << endl;
         };
         file.close();
     }
@@ -132,11 +128,9 @@ void addTodoItem()
     cout << "Enter list id: ";
     cin >> id;
     cout << "Enter title: ";
-    cin.clear();
     cin.ignore();
     getline(cin, description);
     cout << "Enter content: ";
-    cin.clear();
     cin.ignore();
     getline(cin, content);
     cout << "Enter completed status (yes/no): ";
@@ -180,7 +174,8 @@ void welcomeUser()
     cout << "Answer: ";
     cin >> choice;
     choice2 = determineChoice(choice);
-    if(choice2 != 3){
+    if (choice2 != 3)
+    {
         welcomeUser();
     }
 }
