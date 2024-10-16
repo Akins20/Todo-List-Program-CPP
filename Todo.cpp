@@ -131,13 +131,16 @@ void addTodoItem()
 
     cout << "Enter list id: ";
     cin >> id;
-    cout << "Enter description: ";
+    cout << "Enter title: ";
     cin >> description;
+    getline(cin, description);
     cout << "Enter content: ";
     cin >> content;
-    cout << "Enter completed status (0/1): ";
+    cin.ignore();
+    getline(cin, content);
+    cout << "Enter completed status (yes/no): ";
     cin >> completedStr;
-    completed = completedStr == "1"? "Yes" : "No";
+    completed = (completedStr == "yes");
     saveTodoList(id, description, content, completed);
 
     cout << "Todo item added successfully!" << endl;
