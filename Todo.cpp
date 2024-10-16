@@ -111,8 +111,8 @@ void saveTodoList(int id, string description, string content, bool completed)
     ofstream file(TodoFileName, ios::app);
     if (file.is_open())
     {
-        file << newItem.getId() << " || " << newItem.getDescription() << " || "
-             << newItem.getContent() << " || "
+        file << newItem.getId() << ", " << newItem.getDescription() << ", "
+             << newItem.getContent() << ", "
              << (newItem.getCompleted() ? "Yes" : "No") << endl;
         file.close();
     }
@@ -132,10 +132,11 @@ void addTodoItem()
     cout << "Enter list id: ";
     cin >> id;
     cout << "Enter title: ";
-    cin >> description;
+    cin.clear();
+    cin.ignore();
     getline(cin, description);
     cout << "Enter content: ";
-    cin >> content;
+    cin.clear();
     cin.ignore();
     getline(cin, content);
     cout << "Enter completed status (yes/no): ";
@@ -169,6 +170,7 @@ int determineChoice(int choice)
 void welcomeUser()
 {
     int choice;
+    int choice2;
 
     cout << "Welcome to Todo List!" << endl;
     cout << "Choose an option:" << endl;
@@ -177,7 +179,10 @@ void welcomeUser()
     cout << "3. Exit" << endl;
     cout << "Answer: ";
     cin >> choice;
-    determineChoice(choice);
+    choice2 = determineChoice(choice);
+    if(choice2 != 3){
+        welcomeUser();
+    }
 }
 // A simple To do list program
 int main()
