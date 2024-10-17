@@ -97,6 +97,55 @@ void displayTodoList()
     // Add more items to the list here...
 }
 
+// Function to fetch the todo list by id
+void fetchTodoListByID(int id)
+{
+    ifstream file(TodoFileName);
+
+    if (file.is_open())
+    {
+        string line;
+        bool found = false;
+        while (getline(file, line))
+        {
+            stringstream ss(line);
+            string todoIdStr, description, content, completedStr;
+            getline(ss, todoIdStr, ',');
+            int currentId = stoi(todoIdStr);
+
+            // Check if the current line's ID matches the input ID
+            if (currentId == id)
+            {
+
+                getline(ss, description, ',');
+                getline(ss, content, ',');
+                getline(ss, completedStr);
+
+                bool completed = (completedStr == "Yes");
+
+                TodoItem newItem;
+                newItem.setId(currentId);
+                newItem.setContent(content);
+                newItem.setDescription(description);
+                newItem.setCompleted(completed);
+
+                cout << newItem.getId() << " || " << newItem.getDescription() << " || " << newItem.getContent() << " || " << (newItem.getCompleted() ? "Yes" : "No") << endl;
+                found = true;
+                break;
+            }
+            if (!found)
+            {
+                cout << "The inputted Id: " << id << " does not exist." << endl;
+            }
+        }
+        file.close();
+    }
+    else
+    {
+        cout << "Error opening file: " << TodoFileName << endl;
+    }
+}
+
 void saveTodoList(int id, string description, string content, bool completed)
 {
     TodoItem newItem;
@@ -127,11 +176,11 @@ void addTodoItem()
 
     cout << "Enter list id: ";
     cin >> id;
-    cout << "Enter title: ";
     cin.ignore();
+
+    cout << "Enter title: ";
     getline(cin, description);
     cout << "Enter content: ";
-    cin.ignore();
     getline(cin, content);
     cout << "Enter completed status (yes/no): ";
     cin >> completedStr;
@@ -152,7 +201,13 @@ int determineChoice(int choice)
         displayTodoList();
         break;
     case 3:
-        cout << "Exiting..." << endl;
+        int inputId;
+        cout << "Enter the list id: ";
+        cin >> inputId;
+        fetchTodoListByID(inputId);
+        break;
+    case 4:
+        cout << "Exiting...";
         exit(0);
         break;
     default:
@@ -170,11 +225,12 @@ void welcomeUser()
     cout << "Choose an option:" << endl;
     cout << "1. Add a new todo item" << endl;
     cout << "2. Display the todo list" << endl;
-    cout << "3. Exit" << endl;
+    cout << "3. Display a specific todo item by Id" << endl;
+    cout << "4. Exit" << endl;
     cout << "Answer: ";
     cin >> choice;
     choice2 = determineChoice(choice);
-    if (choice2 != 3)
+    if (choice2 != 4)
     {
         welcomeUser();
     }
